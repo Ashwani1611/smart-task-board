@@ -201,6 +201,26 @@ class RapidCreationLockTests(TaskFactoryMixin, TestCase):
 
             self.assertTrue(fourth.is_locked)
 
+    def test_additional_tasks_in_same_rolling_window_are_locked(self):
+        now = self.dt(minute=30)
+
+        with patch("tasks.services.timezone.now", return_value=now):
+            tasks = [
+                create_task(
+                    title=f"Task {index}",
+                    priority=Task.Priority.LOW,
+                    estimated_time=10,
+                )
+                for index in range(1, 7)
+            ]
+
+            self.assertFalse(tasks[0].is_locked)
+            self.assertFalse(tasks[1].is_locked)
+            self.assertFalse(tasks[2].is_locked)
+            self.assertTrue(tasks[3].is_locked)
+            self.assertTrue(tasks[4].is_locked)
+            self.assertTrue(tasks[5].is_locked)
+
     def test_locked_until_is_five_minutes_after_creation(self):
         now = self.dt(minute=30)
 

@@ -51,6 +51,9 @@ def create_task(*, title, priority, estimated_time):
         created_at__lte=now,
     ).count()
 
+    # Deliberate rolling-window interpretation: once three or more
+    # tasks exist in the preceding two minutes, every additional task
+    # created while that condition remains true is temporarily locked.
     should_lock = recent_task_count >= 3
 
     task = Task.objects.create(
@@ -92,6 +95,9 @@ def completion_window_valid(task):
     if not is_odd_minute_task(task):
         return True
 
+    # created_at and timezone.now() are both timezone-aware instants.
+    # The odd/even decision uses local display time, while elapsed-time
+    # arithmetic remains correct regardless of the stored UTC offset.
     deadline = task.created_at + timedelta(
         minutes=task.estimated_time
     )
