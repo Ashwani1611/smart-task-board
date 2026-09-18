@@ -132,3 +132,6 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# Default primary key type for models without an explicit primary key.
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
