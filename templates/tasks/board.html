@@ -1,0 +1,254 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Task Board</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'tasks/board.css' %}"
+    >
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="page-header">
+        <p class="eyebrow">SMART TASK BOARD</p>
+
+        <h1>Plan. Prioritize. Complete.</h1>
+
+        <p class="subtitle">
+            A task board with priority, timing,
+            locking and hidden completion rules.
+        </p>
+    </header>
+
+
+    {% if messages %}
+        <div class="messages">
+
+            {% for message in messages %}
+
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+    {% endif %}
+
+
+    <section class="create-section">
+
+        <div class="section-title">
+            <div>
+                <p class="section-label">NEW TASK</p>
+                <h2>Create a task</h2>
+            </div>
+        </div>
+
+
+        <form method="post" class="task-form">
+
+            {% csrf_token %}
+
+            <div class="field">
+                <label for="{{ form.title.id_for_label }}">
+                    Title
+                </label>
+
+                {{ form.title }}
+
+                {% for error in form.title.errors %}
+                    <span class="field-error">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+
+
+            <div class="field">
+                <label for="{{ form.priority.id_for_label }}">
+                    Priority
+                </label>
+
+                {{ form.priority }}
+
+                {% for error in form.priority.errors %}
+                    <span class="field-error">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+
+
+            <div class="field">
+                <label for="{{ form.estimated_time.id_for_label }}">
+                    Estimated Time
+                </label>
+
+                {{ form.estimated_time }}
+
+                {% for error in form.estimated_time.errors %}
+                    <span class="field-error">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+
+
+            <button type="submit" class="add-button">
+                Add Task
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <section class="tasks-section">
+
+        <div class="tasks-header">
+
+            <div>
+                <p class="section-label">BOARD</p>
+                <h2>Your Tasks</h2>
+            </div>
+
+            <div class="task-count">
+                {{ tasks|length }}
+            </div>
+
+        </div>
+
+
+        <div class="task-grid">
+
+            {% for task in tasks %}
+
+                <article class="task-card">
+
+                    <div class="task-top">
+
+                        <span
+                            class="priority
+                            priority-{{ task.priority|lower }}"
+                        >
+                            {{ task.get_priority_display }}
+                        </span>
+
+
+                        <span
+                            class="status
+                            status-{{ task.status|lower }}"
+                        >
+                            {{ task.status }}
+                        </span>
+
+                    </div>
+
+
+                    <h3 class="task-title">
+                        {{ task.title }}
+                    </h3>
+
+
+                    <div class="task-details">
+
+                        <div class="detail-row">
+                            <span>Estimated</span>
+
+                            <strong>
+                                {{ task.estimated_time }} min
+                            </strong>
+                        </div>
+
+
+                        <div class="detail-row">
+                            <span>Created</span>
+
+                            <strong>
+                                {{ task.created_at|date:"d M, h:i A" }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="task-action">
+
+                        {% if task.is_completed %}
+
+                            <div class="completed-state">
+                                ✓ Completed
+                            </div>
+
+                        {% elif task.is_locked %}
+
+                            <button
+                                class="locked-button"
+                                disabled
+                            >
+                                Locked
+                            </button>
+
+                        {% else %}
+
+                            <form
+                                method="post"
+                                action="{% url 'tasks:complete' task.id %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="complete-button"
+                                >
+                                    Complete Task
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        ✓
+                    </div>
+
+                    <h3>No tasks yet</h3>
+
+                    <p>
+                        Add your first task above to begin.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+</body>
+</html>
