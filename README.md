@@ -298,7 +298,6 @@ smart-task-board/
 ├── .gitignore
 ├── Database.md
 ├── README.md
-├── db.sqlite3
 ├── manage.py
 └── requirements.txt
 ```
