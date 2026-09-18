@@ -198,8 +198,15 @@
                             <button
                                 class="locked-button"
                                 disabled
+                                aria-live="polite"
                             >
-                                Locked
+                                <span aria-hidden="true">🔒</span>
+                                <span
+                                    class="lock-countdown"
+                                    data-lock-until="{{ task.locked_until|date:'c' }}"
+                                >
+                                    Locked
+                                </span>
                             </button>
 
                         {% else %}
@@ -249,6 +256,77 @@
     </section>
 
 </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const countdowns = document.querySelectorAll(
+        ".lock-countdown[data-lock-until]"
+    );
+
+    if (!countdowns.length) {
+        return;
+    }
+
+    let reloadScheduled = false;
+
+    function updateCountdowns() {
+        const now = Date.now();
+
+        countdowns.forEach(function (element) {
+            const unlockAt = Date.parse(
+                element.dataset.lockUntil
+            );
+
+            if (Number.isNaN(unlockAt)) {
+                element.textContent = "Locked";
+                return;
+            }
+
+            const remaining = Math.max(
+                0,
+                unlockAt - now
+            );
+
+            if (remaining <= 0) {
+                element.textContent = "Unlocking…";
+
+                if (!reloadScheduled) {
+                    reloadScheduled = true;
+
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 500);
+                }
+
+                return;
+            }
+
+            const totalSeconds = Math.ceil(
+                remaining / 1000
+            );
+            const minutes = Math.floor(
+                totalSeconds / 60
+            );
+            const seconds = totalSeconds % 60;
+
+            element.textContent =
+                "Locked · " +
+                minutes +
+                "m " +
+                String(seconds).padStart(2, "0") +
+                "s";
+        });
+    }
+
+    updateCountdowns();
+
+    window.setInterval(
+        updateCountdowns,
+        1000
+    );
+});
+</script>
 
 </body>
 </html>
