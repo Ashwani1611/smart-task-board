@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
-from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 
@@ -531,12 +530,7 @@ class TaskBoardViewTests(TaskFactoryMixin, TestCase):
                 follow=True,
             )
 
-        messages = [
-            str(message)
-            for message in get_messages(response.wsgi_request)
-        ]
-
-        self.assertIn(HINT_PRIORITY, messages)
+        self.assertContains(response, HINT_PRIORITY)
 
     def test_complete_view_returns_404_for_missing_task(self):
         response = self.client.post(
