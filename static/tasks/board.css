@@ -383,10 +383,22 @@ body {
 }
 
 .locked-button {
-    border: none;
+    border: 1px dashed #c7c7cc;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
 
     background: #eeeeef;
-    color: #999;
+    color: #777;
+
+    cursor: not-allowed;
+}
+
+.lock-countdown {
+    font-variant-numeric: tabular-nums;
 }
 
 .completed-state {
