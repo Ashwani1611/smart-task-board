@@ -296,7 +296,7 @@ smart-task-board/
 │       └── board.css
 |
 ├── .gitignore
-├── DATABASE.md
+├── Database.md
 ├── README.md
 ├── db.sqlite3
 ├── manage.py
@@ -328,7 +328,7 @@ Fields:
 For complete database documentation, see:
 
 ```text
-DATABASE.md
+Database.md
 ```
 
 ---
