@@ -473,10 +473,12 @@ This keeps task completion inside a controlled transaction.
 ### Prerequisites
 
 ```text
-Python
+Python 3.12+
 pip
 venv
 ```
+
+The project is pinned to `Django==6.1.1`.
 
 ---
 
@@ -511,6 +513,20 @@ Install dependencies:
 ```bash
 python -m pip install -r requirements.txt
 ```
+
+### Optional Environment Configuration
+
+Local development works without additional configuration. For deployment,
+override the development defaults with environment variables:
+
+```bash
+export DJANGO_SECRET_KEY="replace-with-a-strong-secret"
+export DJANGO_DEBUG="False"
+export DJANGO_ALLOWED_HOSTS="example.com,www.example.com"
+```
+
+`DJANGO_ALLOWED_HOSTS` accepts a comma-separated list. Secrets should not be
+committed to Git or stored in `.env` files that are checked into the repository.
 
 Apply migrations:
 
